@@ -1,0 +1,45 @@
+# Node modules
+node_modules/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment variables
+.env
+.env.*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Build output
+/dist
+/build
+
+# Optional: coverage reports
+coverage/
+
+# Optional: Docker
+*.local
+.docker/
+
+# Optional: VSCode settings
+.vscode/
+
+# Optional: test output
+/test-output/
+
+# Optional: PM2 logs
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Optional: cursor
+.cursorrules
+.cursor/
+.bmad-core/
