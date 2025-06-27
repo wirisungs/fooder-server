@@ -14,19 +14,25 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    role: {
+      type: String,
+      enum: ["admin", "user", "partner"],
+      default: "user",
+    },
     phone: {
         type: String,
-        required: true,
+        required: function() { return this.role === 'user'; },
     },
     birthday: {
         type: String,
-        required: true,
+        required: function() { return this.role === 'user'; },
     },
     address: [
         {
-            province: { type: String, required: true },
-            district: { type: String, required: true },
-            ward: { type: String, required: true }
+            province: { type: String, required: function() { return this.parent().role === 'user'; } },
+            district: { type: String, required: function() { return this.parent().role === 'user'; } },
+            ward: { type: String, required: function() { return this.parent().role === 'user'; } },
+            _id: false // Để tránh lỗi khi tạo user
         }
     ],
     createdAt: {
@@ -37,31 +43,22 @@ const userSchema = new mongoose.Schema({
         type: Date,
         default: Date.now,
     },
-    role: {
-        type: String,
-        enum: ["admin", "user", "partner"],
-        default: "user",
-    },
     avatarUrl: {
         type: String,
         default: "",
+        required: function() { return this.role === 'user'; },
     },
     bio: {
         type: String,
         default: "",
+        required: function() { return this.role === 'user'; },
     },
     username: {
         type: String,
         required: true,
         unique: true,
+        required: function() { return this.role === 'user'; },
     },
-    address: [
-        {
-            province: { type: String, required: true },
-            district: { type: String, required: true },
-            ward: { type: String, required: true }
-        }
-    ],
 });
 
 const User = mongoose.model("users", userSchema);

@@ -13,6 +13,11 @@ const restaurantSchema = new mongoose.Schema({
         type: Number,
         required: false,
     },
+    partnerId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "users",
+        required: true,
+    },
 });
 
 const Restaurant = mongoose.model("restaurants", restaurantSchema);

@@ -19,7 +19,16 @@ const reservationSchema = new mongoose.Schema({
         type: String,
         enum: ["Người yêu / Vợ / Chồng", "Hẹn hò người lạ"],
         required: true,
-    }
+    },
+    status: {
+        type: String,
+        enum: ["pending", "accepted", "rejected"],
+        default: "pending",
+    },
+    createdAt: {
+        type: Date,
+        default: Date.now,
+    },
 });
 
 const Reservation = mongoose.model("reservations", reservationSchema);
