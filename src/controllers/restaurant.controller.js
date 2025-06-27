@@ -17,7 +17,7 @@ const restaurantController = {
     //     res.status(201).json(newRestaurant);
     // },
     createRestaurantByPartner: async (req, res) => {
-        const { name, address, rating } = req.body;
+        const { name, address, phone, rating } = req.body;
         const user = await User.findById(req.user.id);
         const restaurant = await Restaurant.findOne({ name });
         if(user.role !== "partner") {
@@ -26,7 +26,7 @@ const restaurantController = {
         if (restaurant) {
             return res.status(400).json({ message: "Tên nhà hàng đã tồn tại" });
         }
-        const newRestaurant = new Restaurant({ name, address, rating, partnerId: user._id });
+        const newRestaurant = new Restaurant({ name, address, phone, rating, partnerId: user._id });
         await newRestaurant.save();
         res.status(201).json(newRestaurant);
     },
@@ -47,8 +47,8 @@ const restaurantController = {
     },
     updateRestaurant: async (req, res) => {
         const { id } = req.params;
-        const { name, address, rating } = req.body;
-        const restaurant = await Restaurant.findByIdAndUpdate(id, { name, address, rating }, { new: true });
+        const { name, address, phone, rating } = req.body;
+        const restaurant = await Restaurant.findByIdAndUpdate(id, { name, address, phone, rating }, { new: true });
         if (!restaurant) {
             return res.status(400).json({ message: "Nhà hàng không tồn tại" });
         }

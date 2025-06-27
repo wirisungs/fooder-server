@@ -13,23 +13,41 @@ const authController = {
         if (userUsername) {
             return res.status(400).json({ message: "Tên người dùng đã tồn tại" });
         }
-        const userPhone = await User.findOne({ phone });
-        if (userPhone) {
-            return res.status(400).json({ message: "Số điện thoại đã tồn tại" });
+        if (role === "user") {
+          if(!phone) {
+            return res.status(400).json({ message: "Số điện thoại không được để trống" });
+          }
+          const userPhone = await User.findOne({ phone });
+          if (userPhone) {
+              return res.status(400).json({ message: "Số điện thoại đã tồn tại" });
+          }
+          const userPhoneRegex = /^0[0-9]{9}$/;
+          if (!userPhoneRegex.test(phone)) {
+              return res.status(400).json({ message: "Số điện thoại không hợp lệ" });
+          }
         }
+
         const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
         if (!passwordRegex.test(password)) {
             return res.status(400).json({ message: "Mật khẩu phải có ít nhất 8 ký tự, bao gồm chữ cái viết hoa, chữ cái viết thường, số và ký tự đặc biệt" });
         }
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        const addressArray = address.split(",");
-        const province = addressArray[0];
-        const district = addressArray[1];
-        const ward = addressArray[2];
-        const addressObject = { province, district, ward };
 
-        const newUser = new User({ email, password: hashedPassword, name, phone, birthday, address: addressObject, role,
+        let addressObject = undefined;
+        if (role === "user") {
+            if (!address || typeof address !== "string") {
+                return res.status(400).json({ message: "Địa chỉ không hợp lệ hoặc bị thiếu" });
+            }
+            const addressArray = address.split(",");
+            const province = addressArray[0];
+            const district = addressArray[1];
+            const ward = addressArray[2];
+            addressObject = [{ province, district, ward }];
+        }
+
+
+        const newUser = new User({ email, password: hashedPassword, name, phone: role === "user" ? phone.replace(/\s/g, '') : undefined, birthday, address: addressObject, role,
           avatarUrl: avatarUrl || "",
           bio: bio || "",
           username: username || "" });
