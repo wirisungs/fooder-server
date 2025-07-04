@@ -3,6 +3,13 @@ const Restaurant = require("../models/restaurant.model");
 const User = require("../models/user.model");
 
 const reviewController = {
+    ratingCalculate: async (req, res) => {
+        const { restaurantId } = req.params;
+        const reviews = await Review.find({ restaurantId: restaurantId });
+        const rating = reviews.reduce((acc, review) => acc + review.rating, 0) / reviews.length;
+        res.status(200).json({ rating });
+    },
+
     createReview: async (req, res) => {
         const user = await User.findById(req.user.id);
         if (!user) {
@@ -35,7 +42,7 @@ const reviewController = {
         const newReview = new Review({
             restaurantId,
             userId: user._id,
-            rating,
+            rating: rating,
             comment
         });
         await newReview.save();
