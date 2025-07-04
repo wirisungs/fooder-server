@@ -2,11 +2,13 @@ const User = require("../models/user.model");
 
 const userController = {
     getUser: async (req, res) => {
-        const user = await User.findById(req.user.id);
-        if (!user) {
-            return res.status(400).json({ message: "Người dùng không tồn tại" });
+        try {
+            const users = await User.find().select('-password');
+            res.status(200).json(users);
+        } catch (error) {
+            console.error('Error in getUser:', error);
+            res.status(500).json({ message: "Internal server error" });
         }
-        res.status(200).json(user);
     },
     updateUser: async (req, res) => {
         const { name, phone, birthday, address, avatarUrl, bio, username } = req.body;
